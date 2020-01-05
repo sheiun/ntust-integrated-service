@@ -8,6 +8,7 @@ from query import QueryDataFrame
 # instantiate the app
 app = Flask(__name__)
 app.config.from_object(__name__)
+app.url_map.strict_slashes = False
 
 # enable CORS
 CORS(app, resources={r"/*": {"origins": "*"}})
@@ -16,7 +17,7 @@ CORS(app, resources={r"/*": {"origins": "*"}})
 QDF = {"ntust": QueryDataFrame(pd.read_csv("ntust/student.csv"))}
 
 
-@app.route("/api/<string:school>/student", strict_slashes=False)
+@app.route("/api/<string:school>/student")
 def student(school: str, **kwargs):
     school_qdf = QDF[school]
     if kwargs:
@@ -25,10 +26,7 @@ def student(school: str, **kwargs):
     return jsonify(school_qdf.to_query_list().random())
 
 
-@app.route(
-    "/api/<string:school>/student/<string:id>/<string:name>",
-    strict_slashes=False,
-)
+@app.route("/api/<string:school>/student/<string:id>/<string:name>")
 def auth_student(school: str, *args, **kwargs):
     # TODO: verify request to ensure the user is logged
     pass
